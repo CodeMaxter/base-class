@@ -1,8 +1,9 @@
 'use strict';
 
 var BaseClass = function(definition) {
-    var base = definition.extend || Object;
-    var construct = definition.construct || definition.extend || function() {};
+    var base = definition.extend || Object,
+        construct = definition.construct || definition.extend || function() {},
+        key;
 
     var newClass = function() {
         this.super = base;
@@ -14,16 +15,19 @@ var BaseClass = function(definition) {
         func.prototype = definition.extend.prototype;
         newClass.prototype = new func();
         newClass.prototype.constructor = newClass;
-        // newClass._extend_ = definition.extend;
         newClass.super = definition.extend.prototype;
     }
 
     if (definition.statics) {
-        for (var n in definition.statics) newClass[n] = definition.statics[n];
+        for (key in definition.statics) {
+            newClass[key] = definition.statics[key];
+        }
     }
 
     if (definition.members) {
-        newClass.prototype = definition.members;
+        for (key in definition.members) {
+            newClass.prototype[key] = definition.members[key];
+        }
     }
 
     return newClass;
